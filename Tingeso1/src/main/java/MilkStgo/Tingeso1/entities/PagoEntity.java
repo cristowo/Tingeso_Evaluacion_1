@@ -1,5 +1,6 @@
 package MilkStgo.Tingeso1.entities;
 
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
@@ -8,12 +9,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@AllArgsConstructor
+@Table(name = "pagos")
 @NoArgsConstructor
-@Table(name = "acopios")
+@AllArgsConstructor
 @Data
-
-public class AcopioEntity {
+public class PagoEntity {
     @Id
-    private Integer id_Acopio;
+    private Integer id_pago;
+    private Integer id_resultado;
 }
