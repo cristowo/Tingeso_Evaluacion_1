@@ -22,3 +22,4 @@ public class LlegadaEntity {
     private Integer id_proveedor;
     private Integer id_resultado;
 }
+
