@@ -1,16 +1,36 @@
 <!DOCTYPE html>
 <html lang = "es" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Mi página de inicio</title>
-    <style>
-        body {
-            background-color: black;
-            color: white;
-        }
-    </style>
+    <meta charset="UTF-8">
+    <title>Title</title>
 </head>
 <body>
-<h1>Bienvenido a mi página de inicio</h1>
-<p>Esta es una página de ejemplo con fondo negro y texto blanco.</p>
+<form method="POST" action="procesar.php" class="formulario">
+    <div class="form-group">
+        <label for="parametro1">nOMBRE:</label>
+        <input type="text" id="parametro1" name="parametro1" class="form-control">
+    </div>
+
+    <div class="form-group">
+        <label for="parametro2">Codigo:</label>
+        <input type="text" id="parametro2" name="parametro2" class="form-control">
+    </div>
+
+    <div class="form-group">
+        <label for="parametro3">Categoria:</label>
+        <input type="text" id="parametro3" name="parametro3" class="form-control">
+    </div>
+
+    <div class="form-group">
+        <label for="parametro4">Retencion:</label>
+        <input type="text" id="parametro4" name="parametro4" class="form-control">
+    </div>
+
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary">Enviar</button>
+    </div>
+</form>
+
+
 </body>
 </html>
