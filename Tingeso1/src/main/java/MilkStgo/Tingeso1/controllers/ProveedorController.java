@@ -24,20 +24,21 @@ public class ProveedorController {
 
     // Creaciones de nuevos Proveedores en la base de datos
     @GetMapping("/nuevoProveedor")
-    public String nuevoProveedorMap(){return "nuevoProveedor";}
-    @PostMapping("/nuevoProveedor")
-    public String nuevoProveedor(@RequestParam("nombre") String nombre,
+    public String provedor(){return "nuevoProveedor";}
+    @PostMapping("/crearNuevoProveedor")
+    public String crearNuevoProveedor(@RequestParam("nombre") String nombre,
                                   @RequestParam("codigo") String codigo,
                                   @RequestParam("categoria") String categoria,
                                   @RequestParam("retencion") String retencion){
         proveedorService.guardarProveedor(nombre, codigo, categoria, retencion);
-        return "redirect:/";
+        return "redirect:/listaProveedores";
     }
 
     // Mostrar Listas de los proveedores existentes en la base de datos
     @GetMapping("/listaProveedores")
     public String listar(Model model){
         List<ProveedorEntity> proveedores = proveedorService.showListaProveedores();
+        //asigna un nombre utilizado para poder verse en la vista
         model.addAttribute("proveedores", proveedores);
         return "listaProveedores";
     }

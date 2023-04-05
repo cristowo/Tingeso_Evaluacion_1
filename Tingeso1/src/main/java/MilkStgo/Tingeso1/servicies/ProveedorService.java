@@ -18,8 +18,8 @@ public class ProveedorService {
         ProveedorEntity nuevo_proveedor = new ProveedorEntity();
         nuevo_proveedor.setCodigo(Integer.parseInt(codigo));
         nuevo_proveedor.setNombre(nombre);
-        nuevo_proveedor.setRetencion(retencion);
         nuevo_proveedor.setCategoria(categoria);
+        nuevo_proveedor.setRetencion(retencion);
         proveedorRepository.save(nuevo_proveedor);
     }
 
