@@ -1,10 +1,7 @@
 package MilkStgo.Tingeso1.entities;
 
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.SequenceGenerator;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,9 +13,18 @@ import lombok.NoArgsConstructor;
 @Data
 public class ProveedorEntity {
     @Id
+    @SequenceGenerator(
+            name = "proveedor_sequence",
+            sequenceName = "proveedor_sequence",
+            allocationSize = 1
+    )
+    @GeneratedValue(
+            strategy = GenerationType.SEQUENCE,
+            generator = "proveedor_sequence"
+    )
     private Integer id_proveedor;
     private Integer codigo;
     private String nombre;
     private String categoria;
-    private Boolean retencion;
+    private String retencion;
 }

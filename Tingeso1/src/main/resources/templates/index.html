@@ -2,35 +2,22 @@
 <html lang = "es" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Listado de Empleados</title>
+    <link rel="stylesheet"
+          href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+          integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+          crossorigin="anonymous">
+    <link rel = "stylesheet" href= "../static/css/navbar.css" type="text/css" th:href="@{/css/navbar.css}">
 </head>
 <body>
-<form method="POST" action="procesar.php" class="formulario">
-    <div class="form-group">
-        <label for="parametro1">nOMBRE:</label>
-        <input type="text" id="parametro1" name="parametro1" class="form-control">
+<header class="header">
+    <div class="logo">
+        <a class="btn" href="/"><img src="https://art.pixilart.com/c519d9af54c8d25.png" width="80" height="80">
+            <button>Menú Principal</button>
+        </a>
     </div>
-
-    <div class="form-group">
-        <label for="parametro2">Codigo:</label>
-        <input type="text" id="parametro2" name="parametro2" class="form-control">
-    </div>
-
-    <div class="form-group">
-        <label for="parametro3">Categoria:</label>
-        <input type="text" id="parametro3" name="parametro3" class="form-control">
-    </div>
-
-    <div class="form-group">
-        <label for="parametro4">Retencion:</label>
-        <input type="text" id="parametro4" name="parametro4" class="form-control">
-    </div>
-
-    <div class="form-group">
-        <button type="submit" class="btn btn-primary">Enviar</button>
-    </div>
-</form>
-
-
+    <a class="btn" href="/opcionesProveedor"><button>Opciones Proveedor</button></a>
+    <a class="btn" href="/"><button>Gestión</button></a>
+</header>
 </body>
 </html>
