@@ -16,7 +16,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 @Service
 public class LlegadaService {
@@ -58,7 +61,14 @@ public class LlegadaService {
 
     public void guardarDatosBD(String fecha, String turno, String proveedor, String kg_leche){
         LlegadaEntity aux = new LlegadaEntity();
-        aux.setFecha(fecha);
+
+        try{
+            SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
+            Date date = format.parse(fecha);
+            aux.setFecha(date);
+        }catch (ParseException ex){
+            throw new RuntimeException(ex);
+        }
         aux.setTurno(turno);
         aux.setProveedor(proveedor);
         aux.setKg_leche(Integer.parseInt(kg_leche));
@@ -71,7 +81,7 @@ public class LlegadaService {
     @Generated
     public String leerCsv(String archivo){
         BufferedReader bf = null;
-        llegadaRepository.deleteAll();
+        //llegadaRepository.deleteAll();
         try{
             bf = new BufferedReader(new FileReader(archivo));
             String temp = "";

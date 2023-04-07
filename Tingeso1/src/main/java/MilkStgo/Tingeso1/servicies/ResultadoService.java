@@ -58,12 +58,35 @@ public class ResultadoService {
         aux.setProveedor(proveedor);
         aux.setPorcentaje_sodio(Integer.parseInt(sodio));
         aux.setPorcentaje_grasa(Integer.parseInt(grasa));
+        aux.setTiempo("No_configurado");
         guardarDatosResultado(aux);
     }
 
     public void eliminarDatos(ArrayList<ResultadoEntity> datos){
         resultadoRepository.deleteAll(datos);
     }
+    public void actual(){
+        ArrayList<ResultadoEntity> datos = resultadoRepository.findAllByTiempo("No_configurado");
+        for(int i = 0; i < datos.size(); i++){
+            datos.get(i).setTiempo("Actual");
+            resultadoRepository.save(datos.get(i));
+        }
+    }
+    public void pasado(){
+        ArrayList<ResultadoEntity> datos = resultadoRepository.findAllByTiempo("Actual");
+        for(int i = 0; i < datos.size(); i++){
+            datos.get(i).setTiempo("Pasado");
+            resultadoRepository.save(datos.get(i));
+        }
+    }
+    public void obsoleto(){
+        ArrayList<ResultadoEntity> datos = resultadoRepository.findAllByTiempo("Pasado");
+        for(int i = 0; i < datos.size(); i++){
+            datos.get(i).setTiempo("Obsoleto");
+            resultadoRepository.save(datos.get(i));
+        }
+    }
+
     @Generated
     public String leerCsv(String archivo){
         BufferedReader bf = null;
@@ -81,6 +104,9 @@ public class ResultadoService {
                     temp = temp + "\n" + bfRead;
                 }
             }
+            obsoleto();
+            pasado();
+            actual();
             return "Resultados Cargados";
         }catch(Exception e){
             return "Error al cargar resultados";

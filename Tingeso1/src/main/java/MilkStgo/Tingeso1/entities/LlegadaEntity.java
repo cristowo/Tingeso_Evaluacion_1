@@ -7,6 +7,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Date;
+
 @Entity
 @Table(name = "llegadas")
 @NoArgsConstructor
@@ -24,7 +26,7 @@ public class LlegadaEntity {
             generator = "llegada_sequence"
     )
     private Integer id_Llegada;
-    private String fecha;
+    private Date fecha;
     private String turno;
     private Integer kg_leche;
     private String proveedor;
