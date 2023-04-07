@@ -1,11 +1,104 @@
 package MilkStgo.Tingeso1.servicies;
 
+import MilkStgo.Tingeso1.entities.LlegadaEntity;
 import MilkStgo.Tingeso1.repositories.LlegadaRepository;
+import lombok.Generated;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.nio.Buffer;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 
 @Service
 public class LlegadaService {
     @Autowired
     LlegadaRepository llegadaRepository;
+
+    // un objeto Logger se utiliza para registrar mensajes y eventos importantes en una aplicación Java.
+    //"final" indica que la variable solo se puede acceder dentro de la clase que la contiene y que su valor no puede ser modificado después de la inicialización.
+    private final Logger logger = LoggerFactory.getLogger(LlegadaService.class);
+
+    public ArrayList<LlegadaEntity> obtenerDatos(){
+        return (ArrayList<LlegadaEntity>) llegadaRepository.findAll();
+    }
+
+    @Generated
+    public String guardar(MultipartFile archivo){
+        String nombre = archivo.getOriginalFilename();
+        if(nombre != null) {
+            if (!archivo.isEmpty()) {
+                try {
+                    byte[] bytes = archivo.getBytes();
+                    Path path = Paths.get(archivo.getOriginalFilename());
+                    Files.write(path, bytes);
+                    logger.info("Archivo Guardado");
+                } catch (IOException e) {
+                    logger.error("Error", e);
+                }
+            }
+            return "Archivo Guardado con exito";
+        }
+        else{
+            return "Error al Guardar el Archivo";
+        }
+    }
+
+    public void guardarDatos(LlegadaEntity datos){
+        llegadaRepository.save(datos);
+    }
+
+    public void guardarDatosBD(String fecha, String turno, String proveedor, String kg_leche){
+        LlegadaEntity aux = new LlegadaEntity();
+        aux.setFecha(fecha);
+        aux.setTurno(turno);
+        aux.setProveedor(Integer.parseInt(proveedor));
+        aux.setKg_leche(Integer.parseInt(kg_leche));
+        guardarDatos(aux);
+    }
+
+    public void eliminarDatos(ArrayList<LlegadaEntity> datos){
+        llegadaRepository.deleteAll(datos);
+    }
+    @Generated
+    public void leerCsv(String archivo){
+        String texto = "";
+        BufferedReader bf = null;
+        llegadaRepository.deleteAll();
+        try{
+            bf = new BufferedReader(new FileReader(archivo));
+            String temp = "";
+            String bfRead;
+            int count = 1;
+            while((bfRead = bf.readLine()) != null){
+                if(count == 1){
+                    count = 0;
+                }else{
+                    guardarDatosBD(bfRead.split(";")[0], bfRead.split(";")[1], bfRead.split(";")[2], bfRead.split(";")[3]);
+                    temp = temp + "\n" + bfRead;
+                }
+            }
+            texto = temp;
+            System.out.println("Si");
+        }catch(Exception e){
+            System.err.println("No");
+        }finally{
+            if(bf != null){
+                try{
+                    bf.close();
+                }catch(IOException e){
+                    logger.error("ERROR", e);
+                }
+            }
+        }
+    }
+    
 }

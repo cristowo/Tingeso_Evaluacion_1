@@ -1,9 +1,7 @@
 package MilkStgo.Tingeso1.entities;
 
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,11 +13,20 @@ import lombok.NoArgsConstructor;
 @Data
 public class LlegadaEntity {
     @Id
+    @SequenceGenerator(
+            name = "llegada_sequence",
+            sequenceName = "llegada_sequence",
+            allocationSize = 1
+    )
+    @GeneratedValue(
+            strategy = GenerationType.SEQUENCE,
+            generator = "llegada_sequence"
+    )
     private Integer id_Llegada;
-    private Integer fecha;
-    private Integer turno;
+    private String fecha;
+    private String turno;
     private Integer kg_leche;
-    private Integer id_proveedor;
+    private Integer proveedor;
     private Integer id_resultado;
 }
 
