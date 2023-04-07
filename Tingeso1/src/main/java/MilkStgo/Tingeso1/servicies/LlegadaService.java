@@ -12,7 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.nio.Buffer;
+//import java.nio.Buffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -60,7 +60,7 @@ public class LlegadaService {
         LlegadaEntity aux = new LlegadaEntity();
         aux.setFecha(fecha);
         aux.setTurno(turno);
-        aux.setProveedor(Integer.parseInt(proveedor));
+        aux.setProveedor(proveedor);
         aux.setKg_leche(Integer.parseInt(kg_leche));
         guardarDatos(aux);
     }
@@ -69,8 +69,7 @@ public class LlegadaService {
         llegadaRepository.deleteAll(datos);
     }
     @Generated
-    public void leerCsv(String archivo){
-        String texto = "";
+    public String leerCsv(String archivo){
         BufferedReader bf = null;
         llegadaRepository.deleteAll();
         try{
@@ -86,10 +85,9 @@ public class LlegadaService {
                     temp = temp + "\n" + bfRead;
                 }
             }
-            texto = temp;
-            System.out.println("Si");
+            return "Acopio cargado con exito";
         }catch(Exception e){
-            System.err.println("No");
+            return "Error al cargar el acopio";
         }finally{
             if(bf != null){
                 try{
@@ -100,5 +98,5 @@ public class LlegadaService {
             }
         }
     }
-    
+
 }

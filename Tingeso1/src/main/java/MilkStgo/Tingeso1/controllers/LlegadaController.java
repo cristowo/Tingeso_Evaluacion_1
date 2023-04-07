@@ -28,8 +28,7 @@ public class LlegadaController {
     @PostMapping("/subirArchivo")
     public String upload(@RequestParam("file")MultipartFile archivo, RedirectAttributes redirectAttributes){
         llegadaService.guardar(archivo);
-        redirectAttributes.addFlashAttribute("mensaje", "Cargado bien");
-        llegadaService.leerCsv("Acopio.csv");
+        redirectAttributes.addFlashAttribute("mensaje", llegadaService.leerCsv("Acopio.csv"));
         return "redirect:/subirArchivo";
     }
 

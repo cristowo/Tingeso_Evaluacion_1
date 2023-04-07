@@ -12,4 +12,9 @@ public class HomeController {
         return "index";
     }
 
+    @GetMapping("/opcionesGestion")
+    public String llegadaResultado(){
+        return "opcionesGestion";
+    }
+
 }

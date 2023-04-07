@@ -8,6 +8,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface LlegadaRepository extends JpaRepository<LlegadaEntity, Integer> {
-    @Query("select l from LlegadaEntity l where l.id_proveedor = :id")
-    LlegadaEntity findById_proveedor(@Param("id")Integer id_proveedor);
+    //@Query("select l from LlegadaEntity l where l.id_proveedor = :id")
+    //LlegadaEntity findById_proveedor(@Param("id")Integer id_proveedor);
 }

@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 
 @Entity
 @Table(name = "llegadas")
@@ -26,7 +27,6 @@ public class LlegadaEntity {
     private String fecha;
     private String turno;
     private Integer kg_leche;
-    private Integer proveedor;
-    private Integer id_resultado;
+    private String proveedor;
 }
 
