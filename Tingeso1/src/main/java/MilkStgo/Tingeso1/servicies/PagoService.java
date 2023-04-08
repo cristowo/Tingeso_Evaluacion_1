@@ -61,22 +61,47 @@ public class PagoService {
         double pagoPorSolidosTotales = pagoPorSolidos(llegadas, resultado.getPorcentaje_sodio());
         pago.setPagoPorSolidosTotales(pagoPorSolidosTotales);
         //------------ Bonificacion por Frecuencia --------------------
-        double bonificacionFrecuencia = bonificacionFecuencia(llegadas, (int) pagoPorLeche);
+        double bonificacionFrecuencia = bonificacionFecuencia(llegadas, (int) (pagoPorLeche+pagoPorGrasa+pagoPorSolidosTotales));
         pago.setBonificacionPorFrecuencia(bonificacionFrecuencia);
-
-        //---------- Calculo utilizando la quincena anterior -----------
+        //---------- Porcentaje variacion leche -----------
         int idQuincenaAnterior = foundIdQuincenaAnterior(quincena, codigo);
+        double pVariacionLeche = 0;
+        double pVariacionGrasa = 0;
+        double pVariacionSolidosTotales = 0;
         if(idQuincenaAnterior != 0){
-            //--------------------------- Porcentaje variacion de leche ------------------------------------
-            Optional<PagoEntity> pagoAnterior = pagoRepository.findById(idQuincenaAnterior);
-            double totalKgLecheAnterior = pagoAnterior.get().getTotalKlsLeche();
-            //recordar que si es - es porke el nuevo es mayor, osea que les dieron mas
-            Double porcentajeVariacionLeche = (((totalKgLecheAnterior-totalKgLeche)/totalKgLeche)*100);
-            pago.setPorcentajeVariacionLeche(porcentajeVariacionLeche);
-        }else{
-            pago.setPorcentajeVariacionLeche(0);
+            PagoEntity pagoAnterior = pagoRepository.findById(idQuincenaAnterior).get();
+            pVariacionLeche = porcentajeVariacionLeche(pagoAnterior, totalKgLeche);
+            //------------ Porcentaje variacion grasa -----------
+            pVariacionGrasa = porcentajeVariacionGrasa(pagoAnterior, porcentajeGrasa);
+            //------------ Porcentaje variacion solidos totales -----------
+            pVariacionSolidosTotales = porcentajeVariacionSolidos(pagoAnterior, porcentajeSolidosTotales);
         }
+        pago.setPorcentajeVariacionLeche(pVariacionLeche);
+        pago.setPorcentajeVariacionGrasa(pVariacionGrasa);
+        pago.setPorcentajeVariacionST(pVariacionSolidosTotales);
+        //-------------- Pago Acopio Leche ----------------------
+        double pagoAcopioLeche = pagoPorLeche + pagoPorGrasa + pagoPorSolidosTotales + bonificacionFrecuencia;
+        //------------ Descuento Variacion Leche --------------------
+        double dVariacionLeche = descuentoVariacionLeche(pVariacionLeche, pagoAcopioLeche);
+        pago.setDescuentoVariacionLeche(dVariacionLeche);
+        //------------ Descuento Variacion Grasa --------------------
+        double dVariacionGrasa = descuentoVariacionGrasa(pVariacionGrasa, pagoAcopioLeche);
+        pago.setDescuentoVariacionGrasa(dVariacionGrasa);
+        //------------ Descuento Variacion Solidos Totales --------------------
+        double dVariacionSolidosTotales = descuentoVariacionSolidos(pVariacionSolidosTotales, pagoAcopioLeche);
+        pago.setDescuentoVariacionST(dVariacionSolidosTotales);
+        //------------ Pago Total --------------------
+        double pagoTotal = pagoAcopioLeche - (dVariacionLeche + dVariacionGrasa + dVariacionSolidosTotales);
+        pago.setPagoTotal(pagoTotal);
+        //------------ Monto Retencion --------------------
+        double montoRetencion = 0;
+        if(pagoTotal > 950000){montoRetencion = pagoTotal * 0.13;}
+        pago.setMontoRetencion(montoRetencion);
+        //------------ Monto Final --------------------
+        double montoFinal = pagoTotal - montoRetencion;
+        pago.setMontoFinal(montoFinal);
 
+        pagoRepository.save(pago);
         //------------ Sistem out de todos los datos ------------
         System.out.println("id_proveedor: "+pago.getId_proveedor());
         System.out.println("codigo proveedor: "+pago.getCodigoProveedor());
@@ -93,6 +118,15 @@ public class PagoService {
         System.out.println("bonificacionPorFrecuencia: "+pago.getBonificacionPorFrecuencia());
         System.out.println("idQuincenaAnterior: "+idQuincenaAnterior);
         System.out.println("porcentajeVariacionLeche: "+pago.getPorcentajeVariacionLeche());
+        System.out.println("porcentajeVariacionGrasa: "+pago.getPorcentajeVariacionGrasa());
+        System.out.println("porcentajeVariacionSolidosTotales: "+pago.getPorcentajeVariacionST());
+        System.out.println("pagoAcopioLeche: "+pagoAcopioLeche);
+        System.out.println("descuentoVariacionLeche: "+pago.getDescuentoVariacionLeche());
+        System.out.println("descuentoVariacionGrasa: "+pago.getDescuentoVariacionGrasa());
+        System.out.println("descuentoVariacionSolidosTotales: "+pago.getDescuentoVariacionST());
+        System.out.println("pagoTotal: "+pago.getPagoTotal());
+        System.out.println("montoRetencion: "+pago.getMontoRetencion());
+        System.out.println("montoFinal: "+pago.getMontoFinal());
         
     }
 
@@ -225,4 +259,79 @@ public class PagoService {
             return quincenaEncontrada.getId_pago();
         }
     }
+
+    public Double porcentajeVariacionLeche(PagoEntity pagoAnterior, Integer totalKgLeche){
+        Double porcentajeVariacionLeche = 0.0;
+        if(pagoAnterior.getId_pago() != 0){
+            Double kgLecheAnterior = pagoAnterior.getTotalKlsLeche();
+            porcentajeVariacionLeche = (((kgLecheAnterior-totalKgLeche)/totalKgLeche)*100);
+        }
+        return porcentajeVariacionLeche;
+    }
+
+    public Double porcentajeVariacionGrasa(PagoEntity pagoAnterior, Integer resultadoGrasa){
+        Double porcentajeVariacionGrasa = 0.0;
+        if(pagoAnterior.getId_pago() != 0){
+            if(pagoAnterior.getPorcentajeGrasa() != 0){
+                Double grasaAnterior = pagoAnterior.getPorcentajeGrasa();
+                porcentajeVariacionGrasa = ((grasaAnterior-resultadoGrasa)/resultadoGrasa);
+            }
+        }
+        return porcentajeVariacionGrasa;
+    }
+
+    public Double porcentajeVariacionSolidos(PagoEntity pagoAnterior, Integer resultadoSolidos){
+        Double porcentajeVariacionSolidos = 0.0;
+        if(pagoAnterior.getId_pago() != 0){
+            if(pagoAnterior.getPorcentajeSolidosTotales() != 0){
+                Double solidosAnterior = pagoAnterior.getPorcentajeSolidosTotales();
+                porcentajeVariacionSolidos = ((solidosAnterior-resultadoSolidos)/resultadoSolidos);
+            }
+        }
+        return porcentajeVariacionSolidos;
+    }
+
+    public Double descuentoVariacionLeche(Double porcentajeVariacionLeche, Double pagoAcopio) {
+        Double descuentoVariacionLeche;
+        if(porcentajeVariacionLeche <= 8) {
+            descuentoVariacionLeche = pagoAcopio * 0;
+        }else if(porcentajeVariacionLeche <= 25) {
+            descuentoVariacionLeche = pagoAcopio * 0.07;
+        }else if(porcentajeVariacionLeche <= 45) {
+            descuentoVariacionLeche = pagoAcopio * 0.15;
+        }else{
+            descuentoVariacionLeche = pagoAcopio * 0.30;
+        }
+        return descuentoVariacionLeche;
+    }
+
+    public Double descuentoVariacionGrasa(Double porcentajeVariacionGrasa, Double pagoAcopio) {
+        Double descuentoVariacionGrasa;
+        if(porcentajeVariacionGrasa <= 15) {
+            descuentoVariacionGrasa = pagoAcopio * 0;
+        }else if(porcentajeVariacionGrasa <= 25) {
+            descuentoVariacionGrasa = pagoAcopio * 0.12;
+        }else if(porcentajeVariacionGrasa <= 40) {
+            descuentoVariacionGrasa = pagoAcopio * 0.20;
+        }else{
+            descuentoVariacionGrasa = pagoAcopio * 0.30;
+        }
+        return descuentoVariacionGrasa;
+    }
+
+    public Double descuentoVariacionSolidos(Double porcentajeVariacionSolidos, Double pagoAcopio) {
+        Double descuentoVariacionSolidos;
+        if(porcentajeVariacionSolidos <= 6) {
+            descuentoVariacionSolidos = pagoAcopio * 0;
+        }else if(porcentajeVariacionSolidos <= 12) {
+            descuentoVariacionSolidos = pagoAcopio * 0.18;
+        }else if(porcentajeVariacionSolidos <= 35) {
+            descuentoVariacionSolidos = pagoAcopio * 0.27;
+        }else{
+            descuentoVariacionSolidos = pagoAcopio * 0.45;
+        }
+        return descuentoVariacionSolidos;
+    }
+
+
 }
