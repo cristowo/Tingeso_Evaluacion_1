@@ -31,15 +31,15 @@ public class PagoEntity {
     private double totalKlsLeche; //
     private int numDiasEnvioLeche; //
     private double promedioDiarioKlsLeche; //
-    private double porcentajeVariacionLeche;
+    private double porcentajeVariacionLeche; //
     private double porcentajeGrasa; //
     private double porcentajeVariacionGrasa;
-    private double porcentajeSolidosTotales;
+    private double porcentajeSolidosTotales; //
     private double porcentajeVariacionST;
-    private double pagoPorLeche;
-    private double pagoPorGrasa;
-    private double pagoPorSolidosTotales;
-    private double bonificacionPorFrecuencia;
+    private double pagoPorLeche; //
+    private double pagoPorGrasa; //
+    private double pagoPorSolidosTotales; //
+    private double bonificacionPorFrecuencia; //
     private double descuentoVariacionLeche;
     private double descuentoVariacionGrasa;
     private double descuentoVariacionST;

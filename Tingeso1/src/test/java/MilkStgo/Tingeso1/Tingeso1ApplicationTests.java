@@ -5,13 +5,15 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.text.ParseException;
+
 @SpringBootTest
 class Tingeso1ApplicationTests {
 
 	@Autowired
 	PagoService pagoService;
 	@Test
-	void contextLoads() {
+	void contextLoads() throws ParseException {
 		pagoService.setPago("01003");
 	}
 

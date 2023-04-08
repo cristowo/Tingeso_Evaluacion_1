@@ -18,6 +18,9 @@ public interface PagoRepository extends JpaRepository<PagoEntity, Integer> {
     @Query(value = "SELECT COUNT(DISTINCT l.fecha) FROM LlegadaEntity l where l.proveedor = :codigo")
     int countByProveedor(@Param("codigo") String codigo);
 
+    // buscamos la fecha anterior a la fecha actual en pago y que sea del proveedor
+    @Query("select p from PagoEntity p where p.quincena = :fecha and p.codigoProveedor = :codigo")
+    PagoEntity findPagoAnterior(@Param("fecha") String fecha, @Param("codigo") String codigo);
 
     // obtenemos informacion de los proveedores
     @Query("select l from LlegadaEntity l where l.proveedor = :Codigo")
