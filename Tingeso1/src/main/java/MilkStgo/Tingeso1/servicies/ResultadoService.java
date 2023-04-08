@@ -90,7 +90,7 @@ public class ResultadoService {
     @Generated
     public String leerCsv(String archivo){
         BufferedReader bf = null;
-        //resultadoRepository.deleteAll();
+        resultadoRepository.deleteAll();
         try{
             bf = new BufferedReader(new FileReader(archivo));
             String temp = "";

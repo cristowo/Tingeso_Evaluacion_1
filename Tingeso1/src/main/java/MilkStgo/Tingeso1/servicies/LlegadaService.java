@@ -81,7 +81,8 @@ public class LlegadaService {
     @Generated
     public String leerCsv(String archivo){
         BufferedReader bf = null;
-        //llegadaRepository.deleteAll();
+        // no se si sea recomendable borrarlo, pero son datos que ya no se ocuparan.
+        llegadaRepository.deleteAll();
         try{
             bf = new BufferedReader(new FileReader(archivo));
             String temp = "";

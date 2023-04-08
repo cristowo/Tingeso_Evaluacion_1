@@ -16,7 +16,7 @@ public class ProveedorService {
 
     public void guardarProveedor(String nombre, String codigo, String categoria, String retencion){
         ProveedorEntity nuevo_proveedor = new ProveedorEntity();
-        nuevo_proveedor.setCodigo(Integer.parseInt(codigo));
+        nuevo_proveedor.setCodigo(codigo);
         nuevo_proveedor.setNombre(nombre);
         nuevo_proveedor.setCategoria(categoria);
         nuevo_proveedor.setRetencion(retencion);

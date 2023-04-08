@@ -29,6 +29,7 @@ public class LlegadaEntity {
     private Date fecha;
     private String turno;
     private Integer kg_leche;
+    // codigo de proveedor
     private String proveedor;
 }
 

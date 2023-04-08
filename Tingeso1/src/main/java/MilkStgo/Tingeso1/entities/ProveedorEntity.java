@@ -23,7 +23,7 @@ public class ProveedorEntity {
             generator = "proveedor_sequence"
     )
     private Integer id_proveedor;
-    private Integer codigo;
+    private String codigo;
     private String nombre;
     private String categoria;
     private String retencion;
