@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Carga de archivos</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/css/bootstrap.min.css">
+  <link rel = "stylesheet" href= "../static/css/navbar.css" type="text/css" th:href="@{/css/navbar.css}">
+</head>
+<body>
+<header class="header">
+  <div class="logo">
+    <a class="btn" href="/"><img src="https://art.pixilart.com/c519d9af54c8d25.png" width="80" height="80">
+      <button>Menú Principal</button>
+    </a>
+  </div>
+  <a class="btn" href="/opcionesProveedor"><button>Opciones Proveedor</button></a>
+  <a class="btn" href="/opcionesGestion"><button>Gestión</button></a>
+</header>
+
+<div class="container">
+  <h1 class="mt-5">Carga de archivos</h1>
+  <form th:action="@{/subirDosArchivo}" method="POST" enctype="multipart/form-data" class="mt-5">
+    <div class="mb-3">
+      <label for="fileLlegada" class="form-label">Archivo de acopio:</label>
+      <input type="file" id="fileLlegada" name="fileLlegada" class="form-control" accept=".csv">
+    </div>
+    <u><b> <h2 th:text="${mensajeLlegada}"></h2></b></u>
+    <div class="mb-3">
+      <label for="fileResultado" class="form-label">Archivo de resultados:</label>
+      <input type="file" id="fileResultado" name="fileResultado" class="form-control" accept=".csv">
+    </div>
+    <u><b> <h2 th:text="${mensajeResultado}"></h2></b></u>
+    <button type="submit" class="btn btn-primary">Enviar</button>
+  </form>
+</div>
+</body>
+</html>

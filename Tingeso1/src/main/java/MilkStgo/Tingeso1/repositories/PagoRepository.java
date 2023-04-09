@@ -10,6 +10,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Repository
 public interface PagoRepository extends JpaRepository<PagoEntity, Integer> {
@@ -22,14 +23,20 @@ public interface PagoRepository extends JpaRepository<PagoEntity, Integer> {
     @Query("select p from PagoEntity p where p.quincena = :fecha and p.codigoProveedor = :codigo")
     PagoEntity findPagoAnterior(@Param("fecha") String fecha, @Param("codigo") String codigo);
 
+    @Query("select p from PagoEntity p where p.codigoProveedor = :codigo")
+    List<PagoEntity> findPagoByCodigo(@Param("codigo") String codigo);
+
     // obtenemos informacion de los proveedores
     @Query("select l from LlegadaEntity l where l.proveedor = :Codigo")
-    ArrayList<LlegadaEntity> findAllByCodigoProveedor(@Param("Codigo") String Codigo);
+    ArrayList<LlegadaEntity> findAllLlegadasByCodigoProveedor(@Param("Codigo") String Codigo);
 
     @Query("select p from ProveedorEntity p where p.codigo = :Codigo")
-    ProveedorEntity findByCodigoProveedor(@Param("Codigo") String Codigo);
+    ProveedorEntity findProveedorByCodigoProveedor(@Param("Codigo") String Codigo);
 
     @Query("select p from ResultadoEntity p where p.proveedor = :Codigo")
     ResultadoEntity findResultadosByCodigoProveedor(@Param("Codigo") String Codigo);
+
+    @Query("select DISTINCT l.proveedor from LlegadaEntity l, ResultadoEntity r where l.proveedor = r.proveedor")
+    ArrayList<String> findAllProveedores();
 
 }

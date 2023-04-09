@@ -43,7 +43,7 @@ public class PagoEntity {
     private double descuentoVariacionLeche; //
     private double descuentoVariacionGrasa; //
     private double descuentoVariacionST; //
-    private double pagoTotal;
+    private double pagoTotal; //
     private double montoRetencion;
     private double montoFinal;
 }

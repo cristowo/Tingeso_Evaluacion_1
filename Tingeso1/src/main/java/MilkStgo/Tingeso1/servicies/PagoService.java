@@ -10,18 +10,35 @@ import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class PagoService {
     @Autowired
     PagoRepository pagoRepository;
 
+    public void crearAll(){
+        pagoRepository.deleteAll();
+        ArrayList<String> proveedores = pagoRepository.findAllProveedores();
+        for (String codigo: proveedores) {
+            try {
+                setPago(codigo);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public List<PagoEntity> buscarPagos(String codigo){
+        return pagoRepository.findPagoByCodigo(codigo);
+    }
+
+    public List<PagoEntity> buscarAllPagos(){
+        return (List<PagoEntity>)pagoRepository.findAll();
+    }
+
     public void setPago(String codigo) throws ParseException {
-        ProveedorEntity proveedor = pagoRepository.findByCodigoProveedor(codigo);
+        ProveedorEntity proveedor = pagoRepository.findProveedorByCodigoProveedor(codigo);
         PagoEntity pago = new PagoEntity();
         //----------- Atributos Basicos-----------------
         //id_proveedor
@@ -31,7 +48,7 @@ public class PagoService {
         //nombre proveedor
         pago.setNombreProveedor(proveedor.getNombre());
         //----------- Quincena ----------------
-        ArrayList<LlegadaEntity> llegadas = pagoRepository.findAllByCodigoProveedor(codigo);
+        ArrayList<LlegadaEntity> llegadas = pagoRepository.findAllLlegadasByCodigoProveedor(codigo);
         //Revisamos en que quincena nos encontramos
         String quincena = obtenerFechaQuincena(llegadas);
         pago.setQuincena(quincena);
