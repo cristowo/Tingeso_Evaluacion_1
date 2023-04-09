@@ -18,7 +18,8 @@ public class PagoService {
     PagoRepository pagoRepository;
 
     public void crearAll(){
-        pagoRepository.deleteAll();
+        //nose porque puse esto xd
+        //pagoRepository.deleteAll();
         ArrayList<String> proveedores = pagoRepository.findAllProveedores();
         for (String codigo: proveedores) {
             try {
@@ -42,7 +43,7 @@ public class PagoService {
         PagoEntity pago = new PagoEntity();
         //----------- Atributos Basicos-----------------
         //id_proveedor
-        pago.setId_proveedor(proveedor.getId_proveedor());
+        //pago.setId_proveedor(proveedor.getId_proveedor());
         //codigo proveedor
         pago.setCodigoProveedor(proveedor.getCodigo());
         //nombre proveedor
@@ -78,7 +79,7 @@ public class PagoService {
         double pagoPorSolidosTotales = pagoPorSolidos(llegadas, resultado.getPorcentaje_sodio());
         pago.setPagoPorSolidosTotales(pagoPorSolidosTotales);
         //------------ Bonificacion por Frecuencia --------------------
-        double bonificacionFrecuencia = bonificacionFecuencia(llegadas, (int) (pagoPorLeche+pagoPorGrasa+pagoPorSolidosTotales));
+        double bonificacionFrecuencia = bonificacionFecuencia(llegadas, (int) (pagoPorLeche));
         pago.setBonificacionPorFrecuencia(bonificacionFrecuencia);
         //---------- Porcentaje variacion leche -----------
         int idQuincenaAnterior = foundIdQuincenaAnterior(quincena, codigo);
@@ -119,32 +120,6 @@ public class PagoService {
         pago.setMontoFinal(montoFinal);
 
         pagoRepository.save(pago);
-        //------------ Sistem out de todos los datos ------------
-        System.out.println("id_proveedor: "+pago.getId_proveedor());
-        System.out.println("codigo proveedor: "+pago.getCodigoProveedor());
-        System.out.println("nombre proveedor: "+pago.getNombreProveedor());
-        System.out.println("quincena: "+pago.getQuincena());
-        System.out.println("totalKlsLeche: "+pago.getTotalKlsLeche());
-        System.out.println("numDiasEnvioLeche: "+pago.getNumDiasEnvioLeche());
-        System.out.println("promedioDiarioKlsLeche: "+pago.getPromedioDiarioKlsLeche());
-        System.out.println("porcentajeGrasa: "+pago.getPorcentajeGrasa());
-        System.out.println("porcentajeSolidosTotales: "+pago.getPorcentajeSolidosTotales());
-        System.out.println("pagoPorLeche: "+pago.getPagoPorLeche());
-        System.out.println("pagoPorGrasa: "+pago.getPagoPorGrasa());
-        System.out.println("pagoPorSolidosTotales: "+pago.getPagoPorSolidosTotales());
-        System.out.println("bonificacionPorFrecuencia: "+pago.getBonificacionPorFrecuencia());
-        System.out.println("idQuincenaAnterior: "+idQuincenaAnterior);
-        System.out.println("porcentajeVariacionLeche: "+pago.getPorcentajeVariacionLeche());
-        System.out.println("porcentajeVariacionGrasa: "+pago.getPorcentajeVariacionGrasa());
-        System.out.println("porcentajeVariacionSolidosTotales: "+pago.getPorcentajeVariacionST());
-        System.out.println("pagoAcopioLeche: "+pagoAcopioLeche);
-        System.out.println("descuentoVariacionLeche: "+pago.getDescuentoVariacionLeche());
-        System.out.println("descuentoVariacionGrasa: "+pago.getDescuentoVariacionGrasa());
-        System.out.println("descuentoVariacionSolidosTotales: "+pago.getDescuentoVariacionST());
-        System.out.println("pagoTotal: "+pago.getPagoTotal());
-        System.out.println("montoRetencion: "+pago.getMontoRetencion());
-        System.out.println("montoFinal: "+pago.getMontoFinal());
-        
     }
 
     public String obtenerFechaQuincena(ArrayList<LlegadaEntity> llegadas){
@@ -154,9 +129,9 @@ public class PagoService {
         int ano = calendar.get(Calendar.YEAR);
         int mes = calendar.get(Calendar.MONTH);
         if(dia <= 15){
-            return Integer.toString(ano)+"/"+Integer.toString(mes)+"/"+1;
+            return Integer.toString(ano)+"/"+(Integer.toString(mes)+1)+"/"+1;
         }else{
-            return Integer.toString(ano)+"/"+Integer.toString(mes)+"/"+2;
+            return Integer.toString(ano)+"/"+(Integer.toString(mes)+1)+"/"+2;
         }
     }
 

@@ -12,6 +12,8 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 @Controller
@@ -45,6 +47,7 @@ public class PagoController {
     @GetMapping("/plantillasPago/{codigo}")
     public String showPlantilla(Model model, @PathVariable("codigo") String codigo){
         List<PagoEntity> pago = pagoService.buscarPagos(codigo);
+        Collections.reverse(pago);
         model.addAttribute("pago", pago);
         return "plantillasPago";
     }

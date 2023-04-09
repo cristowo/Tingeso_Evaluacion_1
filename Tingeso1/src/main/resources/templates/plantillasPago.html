@@ -16,6 +16,7 @@
   <a class="btn" href="/opcionesProveedor"><button>Opciones Proveedor</button></a>
   <a class="btn" href="/opcionesGestion"><button>Gestión</button></a>
 </header>
+<br>
 <tr th:each="pago : ${pago}">
 <div class="container">
   <div style="background-color: #F9F9F9; border: 1px solid #ddd; border-radius: 5px; padding: 20px;">
@@ -27,14 +28,6 @@
         <tr>
           <td>Id de pago:</td>
           <td th:text="${pago.id_pago}"></td>
-        </tr>
-        <tr>
-          <td>Id de proveedor:</td>
-          <td th:text="${pago.id_proveedor}"></td>
-        </tr>
-        <tr>
-          <td>Id de resultado:</td>
-          <td th:text="${pago.id_resultado}"></td>
         </tr>
         <tr>
           <td>Quincena:</td>

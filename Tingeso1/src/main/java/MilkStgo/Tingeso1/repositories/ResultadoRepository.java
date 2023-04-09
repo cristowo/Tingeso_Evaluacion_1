@@ -11,7 +11,6 @@ import java.util.ArrayList;
 @Repository
 public interface ResultadoRepository extends JpaRepository<ResultadoEntity, Integer> {
     //seleccionar todos los que tengan "Pasado"
-    @Query("select r from ResultadoEntity r where r.tiempo = :Pasado")
-    ArrayList<ResultadoEntity> findAllByTiempo(@Param("Pasado") String Pasado);
+
 
 }

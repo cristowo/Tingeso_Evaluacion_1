@@ -9,25 +9,36 @@
         crossorigin="anonymous">
   <link rel = "stylesheet" href= "../static/css/navbar.css" type="text/css" th:href="@{/css/navbar.css}">
   <style>
-    table {
+    .table {
+      font-family: Arial, sans-serif;
       border-collapse: collapse;
-      border: 1px solid #ccc;
-      margin: 20px;
+      width: 100%;
+      margin: auto;
     }
-    thead th {
-      background-color: #f2f2f2;
-      border-bottom: 2px solid #ccc;
+
+    .table thead th {
       font-weight: bold;
+      color: #fff;
+      background-color: #333;
       padding: 10px;
       text-align: left;
     }
-    tbody td {
-      border-bottom: 1px solid #ccc;
-      padding: 10px;
-      text-align: left;
-    }
-    tbody tr:nth-child(even) {
+
+    .table tbody tr:nth-child(even) {
       background-color: #f2f2f2;
+    }
+
+    .table tbody td {
+      padding: 10px;
+      border: 1px solid #ddd;
+    }
+
+    .table tbody td:first-child {
+      font-weight: bold;
+    }
+
+    .table tbody td:last-child {
+      text-align: right;
     }
   </style>
 </head>
@@ -42,24 +53,25 @@
   <a class="btn" href="/opcionesGestion"><button>Gestión</button></a>
 </header>
 <h1>Lista de proveedores</h1>
-
-  <table class="table table-striped">
-    <thead class="thead-dark">
-      <tr>
-        <th scope="col">Código</th>
-        <th scope="col">Nombre</th>
-        <th scope="col">Categoría</th>
-        <th scope="col">Retención</th>
-      </tr>
-    </thead>
-      <tbody>
-        <tr th:each="proveedor : ${proveedores}">
-          <td th:text="${proveedor.codigo}"></td>
-          <td th:text="${proveedor.nombre}"></td>
-          <td th:text="${proveedor.categoria}"></td>
-          <td th:text="${proveedor.retencion}"></td>
-        </tr>
-    </tbody>
-  </table>
+<table class="table">
+  <thead class="thead-dark">
+  <tr>
+    <th scope="col">Código</th>
+    <th scope="col">Nombre</th>
+    <th scope="col">Categoría</th>
+    <th scope="col">Retención</th>
+    <th scope="col">Plantillas</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr th:each="proveedor : ${proveedores}">
+    <td th:text="${proveedor.codigo}"></td>
+    <td th:text="${proveedor.nombre}"></td>
+    <td th:text="${proveedor.categoria}"></td>
+    <td th:text="${proveedor.retencion}"></td>
+    <td style="text-align: left;"><a th:href="@{/plantillasPago/{codigo}(codigo=${proveedor.codigo})}">Visualizar</a></td>
+  </tr>
+  </tbody>
+</table>
 </body>
 </html>

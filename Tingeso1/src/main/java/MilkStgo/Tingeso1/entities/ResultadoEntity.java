@@ -27,6 +27,4 @@ public class ResultadoEntity {
     private String proveedor;
     private Integer porcentaje_grasa;
     private Integer porcentaje_sodio;
-    //Actual -> Pasado -> Obsoleto
-    private String tiempo;
 }
