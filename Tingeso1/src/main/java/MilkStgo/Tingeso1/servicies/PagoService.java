@@ -31,7 +31,7 @@ public class PagoService {
     }
 
     public List<PagoEntity> buscarPagos(String codigo){
-        return pagoRepository.findPagoByCodigo(codigo);
+            return pagoRepository.findPagoByCodigo(codigo);
     }
 
     public List<PagoEntity> buscarAllPagos(){
@@ -129,9 +129,9 @@ public class PagoService {
         int ano = calendar.get(Calendar.YEAR);
         int mes = calendar.get(Calendar.MONTH);
         if(dia <= 15){
-            return Integer.toString(ano)+"/"+(Integer.toString(mes)+1)+"/"+1;
+            return Integer.toString(ano)+"/"+(Integer.toString(mes+1))+"/"+1;
         }else{
-            return Integer.toString(ano)+"/"+(Integer.toString(mes)+1)+"/"+2;
+            return Integer.toString(ano)+"/"+(Integer.toString(mes+1))+"/"+2;
         }
     }
 
@@ -211,11 +211,11 @@ public class PagoService {
         }
         Double bonificacionFrecuencia = 0.0;
         if(mSum >= 10 && tSum >= 10){
-            bonificacionFrecuencia = pagoCategoria * 1.2;
+            bonificacionFrecuencia = pagoCategoria * 0.2;
         }else if(mSum >= 10){
-            bonificacionFrecuencia = pagoCategoria * 1.12;
+            bonificacionFrecuencia = pagoCategoria * 0.12;
         }else if(tSum >= 10){
-            bonificacionFrecuencia = pagoCategoria * 1.08;
+            bonificacionFrecuencia = pagoCategoria * 0.08;
         }
         return bonificacionFrecuencia;
     }

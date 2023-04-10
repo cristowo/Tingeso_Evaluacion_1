@@ -12,6 +12,8 @@ class Tingeso1ApplicationTests {
 
 	@Autowired
 	PagoService pagoService;
+
+	//test con assert
 	@Test
 	void contextLoads() throws ParseException {
 		pagoService.setPago("01003");
