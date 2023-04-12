@@ -11,9 +11,13 @@ import java.util.Calendar;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 @SpringBootTest
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class PagoTest {
 
     @Autowired
@@ -30,11 +34,11 @@ class PagoTest {
         assert pagoService.buscarPagos("01003").size() > 0;
     }
     @Test
-    // 0 pagos
+// 0 pagos
     void testBuscarPagos2() {
-        pagoService.buscarPagos("01004");
-        assert pagoService.buscarPagos("01004").size() == 0;
+        assertEquals(0, pagoService.buscarPagos("01004").size());
     }
+
     @Test
     void testObtenerFechaQuincena(){
         LlegadaEntity llegada = new LlegadaEntity();
@@ -43,8 +47,20 @@ class PagoTest {
         llegada.setFecha(fecha.getTime());
         ArrayList<LlegadaEntity> llegadas = new ArrayList<LlegadaEntity>();
         llegadas.add(llegada);
-        assert pagoService.obtenerFechaQuincena(llegadas).equals("2021/6/1");
+        assertEquals("2021/6/1", pagoService.obtenerFechaQuincena(llegadas));
     }
+
+    @Test
+    void testObtenerFechaQuincena2(){
+        LlegadaEntity llegada = new LlegadaEntity();
+        Calendar fecha = Calendar.getInstance();
+        fecha.set(2021, 5, 20);
+        llegada.setFecha(fecha.getTime());
+        ArrayList<LlegadaEntity> llegadas = new ArrayList<LlegadaEntity>();
+        llegadas.add(llegada);
+        assertEquals("2021/6/2", pagoService.obtenerFechaQuincena(llegadas));
+    }
+
     @Test
     void testTotalKgLeche(){
         LlegadaEntity llegada = new LlegadaEntity();
@@ -54,8 +70,9 @@ class PagoTest {
         ArrayList<LlegadaEntity> llegadas = new ArrayList<LlegadaEntity>();
         llegadas.add(llegada);
         llegadas.add(llegada2);
-        assert pagoService.totalKgLeche(llegadas) == 150;
+        assertEquals(150, pagoService.totalKgLeche(llegadas));
     }
+
     @Test
     void testPagoPorCategoriaA(){
         LlegadaEntity llegada = new LlegadaEntity();
@@ -66,8 +83,9 @@ class PagoTest {
         ArrayList<LlegadaEntity> llegadas = new ArrayList<LlegadaEntity>();
         llegadas.add(llegada);
         llegadas.add(llegada2);
-        assert pagoService.pagoPorCategoria(llegadas, categoria) == 105000;
+        assertEquals(105000, pagoService.pagoPorCategoria(llegadas, categoria));
     }
+
     @Test
     void testPagoPorCategoriaB(){
         LlegadaEntity llegada = new LlegadaEntity();
@@ -78,8 +96,9 @@ class PagoTest {
         ArrayList<LlegadaEntity> llegadas = new ArrayList<LlegadaEntity>();
         llegadas.add(llegada);
         llegadas.add(llegada2);
-        assert pagoService.pagoPorCategoria(llegadas, categoria) == 82500;
+        assertEquals(82500, pagoService.pagoPorCategoria(llegadas, categoria));
     }
+
     @Test
     void testPagoPorCategoriaC(){
         LlegadaEntity llegada = new LlegadaEntity();
@@ -90,7 +109,7 @@ class PagoTest {
         ArrayList<LlegadaEntity> llegadas = new ArrayList<LlegadaEntity>();
         llegadas.add(llegada);
         llegadas.add(llegada2);
-        assert pagoService.pagoPorCategoria(llegadas, categoria) == 60000;
+        assertEquals(60000, pagoService.pagoPorCategoria(llegadas, categoria));
     }
     @Test
     void testPagoPorCategoriaD(){
@@ -102,22 +121,88 @@ class PagoTest {
         ArrayList<LlegadaEntity> llegadas = new ArrayList<LlegadaEntity>();
         llegadas.add(llegada);
         llegadas.add(llegada2);
-        assert pagoService.pagoPorCategoria(llegadas, categoria) == 37500;
+        assertEquals(37500, pagoService.pagoPorCategoria(llegadas, categoria));
     }
+
     @Test
-    void testPagoPorGrasa(){
+    void testPagoPorGrasaResultadoGrasaMenorIgualA20(){
         LlegadaEntity llegada = new LlegadaEntity();
         LlegadaEntity llegada2 = new LlegadaEntity();
         llegada.setKg_leche(100);
         llegada2.setKg_leche(50);
-        Integer grasa = 21;
+        Integer grasa = 20;
         ArrayList<LlegadaEntity> llegadas = new ArrayList<LlegadaEntity>();
         llegadas.add(llegada);
         llegadas.add(llegada2);
-        assert pagoService.pagoPorGrasa(llegadas, grasa) == 12000;
+        assertEquals(4500, pagoService.pagoPorGrasa(llegadas, grasa));
+    }
+
+    @Test
+    void testPagoPorGrasaResultadoGrasaEntre21Y45(){
+        LlegadaEntity llegada = new LlegadaEntity();
+        LlegadaEntity llegada2 = new LlegadaEntity();
+        llegada.setKg_leche(100);
+        llegada2.setKg_leche(50);
+        Integer grasa = 30;
+        ArrayList<LlegadaEntity> llegadas = new ArrayList<LlegadaEntity>();
+        llegadas.add(llegada);
+        llegadas.add(llegada2);
+        assertEquals(12000, pagoService.pagoPorGrasa(llegadas, grasa));
+    }
+
+    @Test
+    void testPagoPorGrasaResultadoGrasaMayorA45(){
+        LlegadaEntity llegada = new LlegadaEntity();
+        LlegadaEntity llegada2 = new LlegadaEntity();
+        llegada.setKg_leche(100);
+        llegada2.setKg_leche(50);
+        Integer grasa = 50;
+        ArrayList<LlegadaEntity> llegadas = new ArrayList<LlegadaEntity>();
+        llegadas.add(llegada);
+        llegadas.add(llegada2);
+        assertEquals(18000, pagoService.pagoPorGrasa(llegadas, grasa));
     }
     @Test
-    void testPagoPorSolidos(){
+    void testPagoPorSolidosResultadoMenorIgualA7() {
+        LlegadaEntity llegada = new LlegadaEntity();
+        LlegadaEntity llegada2 = new LlegadaEntity();
+        llegada.setKg_leche(100);
+        llegada2.setKg_leche(50);
+        Integer solidos = 7;
+        ArrayList<LlegadaEntity> llegadas = new ArrayList<LlegadaEntity>();
+        llegadas.add(llegada);
+        llegadas.add(llegada2);
+        assertEquals(-19500, pagoService.pagoPorSolidos(llegadas, solidos));
+    }
+
+    @Test
+    void testPagoPorSolidosResultadoMayorA7MenorIgualA18() {
+        LlegadaEntity llegada = new LlegadaEntity();
+        LlegadaEntity llegada2 = new LlegadaEntity();
+        llegada.setKg_leche(100);
+        llegada2.setKg_leche(50);
+        Integer solidos = 18;
+        ArrayList<LlegadaEntity> llegadas = new ArrayList<LlegadaEntity>();
+        llegadas.add(llegada);
+        llegadas.add(llegada2);
+        assertEquals(-13500, pagoService.pagoPorSolidos(llegadas, solidos));
+    }
+
+    @Test
+    void testPagoPorSolidosResultadoMayorA18MenorIgualA35() {
+        LlegadaEntity llegada = new LlegadaEntity();
+        LlegadaEntity llegada2 = new LlegadaEntity();
+        llegada.setKg_leche(100);
+        llegada2.setKg_leche(50);
+        Integer solidos = 35;
+        ArrayList<LlegadaEntity> llegadas = new ArrayList<LlegadaEntity>();
+        llegadas.add(llegada);
+        llegadas.add(llegada2);
+        assertEquals(14250, pagoService.pagoPorSolidos(llegadas, solidos));
+    }
+
+    @Test
+    void testPagoPorSolidosResultadoMayorA35() {
         LlegadaEntity llegada = new LlegadaEntity();
         LlegadaEntity llegada2 = new LlegadaEntity();
         llegada.setKg_leche(100);
@@ -126,7 +211,7 @@ class PagoTest {
         ArrayList<LlegadaEntity> llegadas = new ArrayList<LlegadaEntity>();
         llegadas.add(llegada);
         llegadas.add(llegada2);
-        assert pagoService.pagoPorSolidos(llegadas, solidos) == 22500;
+        assertEquals(22500, pagoService.pagoPorSolidos(llegadas, solidos));
     }
     @Test
     void testbonificacionFrecuencia(){
@@ -138,16 +223,42 @@ class PagoTest {
         assert pagoService.bonificacionFecuencia (llegadas, pagoCategoria) == 0.0;
     }
     @Test
-    // + de 10 llegadas
-    void testbonificacionFrecuencia2(){
+    void testBonificacionFrecuenciaAmbosTurnosMayorIgualA10(){
         ArrayList<LlegadaEntity> llegadas = new ArrayList<LlegadaEntity>();
-        for (int i = 0; i < 11; i++) {
-            LlegadaEntity llegada = new LlegadaEntity();
-            llegada.setTurno("M");
-            llegadas.add(llegada);
-        }
         Integer pagoCategoria = 100000;
-        assert pagoService.bonificacionFecuencia (llegadas, pagoCategoria) == 12000;
+        for (int i = 0; i < 10; i++) {
+            LlegadaEntity llegadaM = new LlegadaEntity();
+            LlegadaEntity llegadaT = new LlegadaEntity();
+            llegadaM.setTurno("M");
+            llegadaT.setTurno("T");
+            llegadas.add(llegadaM);
+            llegadas.add(llegadaT);
+        }
+        assertEquals(20000., pagoService.bonificacionFecuencia(llegadas, pagoCategoria));
+    }
+    @Test
+    void testBonificacionFrecuenciaTurnoMMayorIgualA10(){
+        ArrayList<LlegadaEntity> llegadas = new ArrayList<LlegadaEntity>();
+        Integer pagoCategoria = 100000;
+        for (int i = 0; i < 10; i++) {
+            LlegadaEntity llegadaM = new LlegadaEntity();
+            llegadaM.setTurno("M");
+            llegadas.add(llegadaM);
+        }
+        assertEquals(12000, pagoService.bonificacionFecuencia(llegadas, pagoCategoria));
+    }
+
+    @Test
+    void testBonificacionFrecuenciaTurnoTMayorIgualA10(){
+        ArrayList<LlegadaEntity> llegadas = new ArrayList<LlegadaEntity>();
+        Integer pagoCategoria = 100000;
+        for (int i = 0; i < 10; i++) {
+            LlegadaEntity llegadaT = new LlegadaEntity();
+            llegadaT.setTurno("T");
+            llegadas.add(llegadaT);
+        }
+        Double expected = pagoCategoria * 0.08;
+        assertEquals(8000, pagoService.bonificacionFecuencia(llegadas, pagoCategoria));
     }
     @Test
     void testFoundIdQuincenaAnterior() throws ParseException {
@@ -157,11 +268,23 @@ class PagoTest {
     }
     @Test
     void testFoundIdQuincenaAnterior2() throws ParseException {
+        pagoRepository.deleteAll();
         PagoEntity pagoAnterior = new PagoEntity();
         pagoAnterior.setQuincena("2021/6/1");
         pagoAnterior.setCodigoProveedor("01003");
         pagoRepository.save(pagoAnterior);
         String quincena = "2021/6/2";
+        String codigoProveedor = "01003";
+        assert pagoService.foundIdQuincenaAnterior(quincena, codigoProveedor) != 0;
+    }
+    @Test
+    void testFoundIdQuincenaAnterior3() throws ParseException {
+        pagoRepository.deleteAll();
+        PagoEntity pagoAnterior = new PagoEntity();
+        pagoAnterior.setQuincena("2021/6/2");
+        pagoAnterior.setCodigoProveedor("01003");
+        pagoRepository.save(pagoAnterior);
+        String quincena = "2021/7/1";
         String codigoProveedor = "01003";
         assert pagoService.foundIdQuincenaAnterior(quincena, codigoProveedor) != 0;
     }
@@ -190,21 +313,86 @@ class PagoTest {
         assert pagoService.porcentajeVariacionSolidos(pagoAnterior, PorcentajeSolidosActual) == 2;
     }
     @Test
-    void descuentoVariacionLeche(){
-        Double porcentajeVariacionLeche = -66.0;
+    void testDescuentoVariacionLechePorcentajeMenorIgualA8(){
+        Double porcentajeVariacionLeche = 8.0;
         Double pagoAcopio = 1000000.0;
-        assert pagoService.descuentoVariacionLeche(porcentajeVariacionLeche, pagoAcopio) == 0;
+        assert pagoService.descuentoVariacionLeche(porcentajeVariacionLeche, pagoAcopio) == 0.0;
+    }
+
+    @Test
+    void testDescuentoVariacionLechePorcentajeMenorIgualA25(){
+        Double porcentajeVariacionLeche = 25.0;
+        Double pagoAcopio = 1000000.0;
+        assert pagoService.descuentoVariacionLeche(porcentajeVariacionLeche, pagoAcopio) == 0.07 * pagoAcopio;
+    }
+
+    @Test
+    void testDescuentoVariacionLechePorcentajeMenorIgualA45(){
+        Double porcentajeVariacionLeche = 45.0;
+        Double pagoAcopio = 1000000.0;
+        assert pagoService.descuentoVariacionLeche(porcentajeVariacionLeche, pagoAcopio) == 0.15 * pagoAcopio;
+    }
+
+    @Test
+    void testDescuentoVariacionLechePorcentajeMayorA45(){
+        Double porcentajeVariacionLeche = 66.0;
+        Double pagoAcopio = 1000000.0;
+        assert pagoService.descuentoVariacionLeche(porcentajeVariacionLeche, pagoAcopio) == 0.30 * pagoAcopio;
     }
     @Test
-    void descuentoVariacionGrasa(){
-        Double porcentajeVariacionGrasa = 16.0;
+    void testDescuentoVariacionGrasaPorcentajeMenorIgualA15(){
+        Double porcentajeVariacionGrasa = 15.0;
         Double pagoAcopio = 1000000.0;
-        assert pagoService.descuentoVariacionGrasa(porcentajeVariacionGrasa, pagoAcopio) == 120000;
+        assert pagoService.descuentoVariacionGrasa(porcentajeVariacionGrasa, pagoAcopio) == 0.0;
     }
+
     @Test
-    void descuentoVariacionSolidos(){
+    void testDescuentoVariacionGrasaPorcentajeMenorIgualA25(){
+        Double porcentajeVariacionGrasa = 25.0;
+        Double pagoAcopio = 1000000.0;
+        assert pagoService.descuentoVariacionGrasa(porcentajeVariacionGrasa, pagoAcopio) == 0.12 * pagoAcopio;
+    }
+
+    @Test
+    void testDescuentoVariacionGrasaPorcentajeMenorIgualA40(){
+        Double porcentajeVariacionGrasa = 40.0;
+        Double pagoAcopio = 1000000.0;
+        assert pagoService.descuentoVariacionGrasa(porcentajeVariacionGrasa, pagoAcopio) == 0.20 * pagoAcopio;
+    }
+
+    @Test
+    void testDescuentoVariacionGrasaPorcentajeMayorA40(){
+        Double porcentajeVariacionGrasa = 66.0;
+        Double pagoAcopio = 1000000.0;
+        assert pagoService.descuentoVariacionGrasa(porcentajeVariacionGrasa, pagoAcopio) == 0.30 * pagoAcopio;
+    }
+
+    @Test
+    void testDescuentoVariacionSolidosPorcentajeMenorIgualA6(){
+        Double porcentajeVariacionSolidos = 6.0;
+        Double pagoAcopio = 1000000.0;
+        assert pagoService.descuentoVariacionSolidos(porcentajeVariacionSolidos, pagoAcopio) == 0.0;
+    }
+
+    @Test
+    void testDescuentoVariacionSolidosPorcentajeMenorIgualA12(){
+        Double porcentajeVariacionSolidos = 12.0;
+        Double pagoAcopio = 1000000.0;
+        assert pagoService.descuentoVariacionSolidos(porcentajeVariacionSolidos, pagoAcopio) == 0.18 * pagoAcopio;
+    }
+
+    @Test
+    void testDescuentoVariacionSolidosPorcentajeMenorIgualA35(){
         Double porcentajeVariacionSolidos = 35.0;
         Double pagoAcopio = 1000000.0;
-        assert pagoService.descuentoVariacionSolidos(porcentajeVariacionSolidos, pagoAcopio) == 270000;
+        assert pagoService.descuentoVariacionSolidos(porcentajeVariacionSolidos, pagoAcopio) == 0.27 * pagoAcopio;
     }
+
+    @Test
+    void testDescuentoVariacionSolidosPorcentajeMayorA35(){
+        Double porcentajeVariacionSolidos = 66.0;
+        Double pagoAcopio = 1000000.0;
+        assert pagoService.descuentoVariacionSolidos(porcentajeVariacionSolidos, pagoAcopio) == 0.45 * pagoAcopio;
+    }
+
 }

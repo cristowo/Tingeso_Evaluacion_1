@@ -5,6 +5,7 @@ import MilkStgo.Tingeso1.entities.PagoEntity;
 import MilkStgo.Tingeso1.entities.ProveedorEntity;
 import MilkStgo.Tingeso1.entities.ResultadoEntity;
 import MilkStgo.Tingeso1.repositories.PagoRepository;
+import lombok.Generated;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,9 +18,8 @@ public class PagoService {
     @Autowired
     PagoRepository pagoRepository;
 
+    @Generated
     public void crearAll(){
-        //nose porque puse esto xd
-        //pagoRepository.deleteAll();
         ArrayList<String> proveedores = pagoRepository.findAllProveedores();
         for (String codigo: proveedores) {
             try {
@@ -34,16 +34,11 @@ public class PagoService {
             return pagoRepository.findPagoByCodigo(codigo);
     }
 
-    public List<PagoEntity> buscarAllPagos(){
-        return (List<PagoEntity>)pagoRepository.findAll();
-    }
-
+    @Generated
     public void setPago(String codigo) throws ParseException {
         ProveedorEntity proveedor = pagoRepository.findProveedorByCodigoProveedor(codigo);
         PagoEntity pago = new PagoEntity();
         //----------- Atributos Basicos-----------------
-        //id_proveedor
-        //pago.setId_proveedor(proveedor.getId_proveedor());
         //codigo proveedor
         pago.setCodigoProveedor(proveedor.getCodigo());
         //nombre proveedor
