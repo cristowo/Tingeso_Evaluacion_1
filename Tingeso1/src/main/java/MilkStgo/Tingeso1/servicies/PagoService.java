@@ -241,7 +241,7 @@ public class PagoService {
             //vamos a la quincena anterior (mes y dia 1)
             quincenaAnterior = Integer.toString(ano) + "/" + Integer.toString(mes + 1) + "/1";
         }
-        System.out.println(quincenaAnterior);
+        //System.out.println(quincenaAnterior);
         //caso no hay quincena anterior
         PagoEntity quincenaEncontrada = pagoRepository.findPagoAnterior(quincenaAnterior, codigo);
         if (quincenaEncontrada == null) {

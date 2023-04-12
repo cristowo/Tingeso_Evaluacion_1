@@ -2,6 +2,7 @@ package MilkStgo.Tingeso1;
 
 import MilkStgo.Tingeso1.entities.LlegadaEntity;
 import MilkStgo.Tingeso1.entities.PagoEntity;
+import MilkStgo.Tingeso1.repositories.PagoRepository;
 import MilkStgo.Tingeso1.servicies.PagoService;
 
 import java.text.ParseException;
@@ -17,6 +18,8 @@ class PagoTest {
 
     @Autowired
     PagoService pagoService;
+    @Autowired
+    PagoRepository pagoRepository;
 
     @Test
     // almenos tiene un pago, recordar tener archivos en database
@@ -54,7 +57,7 @@ class PagoTest {
         assert pagoService.totalKgLeche(llegadas) == 150;
     }
     @Test
-    void testPagoPorCategoria(){
+    void testPagoPorCategoriaA(){
         LlegadaEntity llegada = new LlegadaEntity();
         LlegadaEntity llegada2 = new LlegadaEntity();
         llegada.setKg_leche(100);
@@ -64,6 +67,42 @@ class PagoTest {
         llegadas.add(llegada);
         llegadas.add(llegada2);
         assert pagoService.pagoPorCategoria(llegadas, categoria) == 105000;
+    }
+    @Test
+    void testPagoPorCategoriaB(){
+        LlegadaEntity llegada = new LlegadaEntity();
+        LlegadaEntity llegada2 = new LlegadaEntity();
+        llegada.setKg_leche(100);
+        llegada2.setKg_leche(50);
+        String categoria = "B";
+        ArrayList<LlegadaEntity> llegadas = new ArrayList<LlegadaEntity>();
+        llegadas.add(llegada);
+        llegadas.add(llegada2);
+        assert pagoService.pagoPorCategoria(llegadas, categoria) == 82500;
+    }
+    @Test
+    void testPagoPorCategoriaC(){
+        LlegadaEntity llegada = new LlegadaEntity();
+        LlegadaEntity llegada2 = new LlegadaEntity();
+        llegada.setKg_leche(100);
+        llegada2.setKg_leche(50);
+        String categoria = "C";
+        ArrayList<LlegadaEntity> llegadas = new ArrayList<LlegadaEntity>();
+        llegadas.add(llegada);
+        llegadas.add(llegada2);
+        assert pagoService.pagoPorCategoria(llegadas, categoria) == 60000;
+    }
+    @Test
+    void testPagoPorCategoriaD(){
+        LlegadaEntity llegada = new LlegadaEntity();
+        LlegadaEntity llegada2 = new LlegadaEntity();
+        llegada.setKg_leche(100);
+        llegada2.setKg_leche(50);
+        String categoria = "D";
+        ArrayList<LlegadaEntity> llegadas = new ArrayList<LlegadaEntity>();
+        llegadas.add(llegada);
+        llegadas.add(llegada2);
+        assert pagoService.pagoPorCategoria(llegadas, categoria) == 37500;
     }
     @Test
     void testPagoPorGrasa(){
@@ -115,6 +154,16 @@ class PagoTest {
         String quincena = "2021/6/1";
         String codigoProveedor = "01003";
         assert pagoService.foundIdQuincenaAnterior(quincena, codigoProveedor) == 0;
+    }
+    @Test
+    void testFoundIdQuincenaAnterior2() throws ParseException {
+        PagoEntity pagoAnterior = new PagoEntity();
+        pagoAnterior.setQuincena("2021/6/1");
+        pagoAnterior.setCodigoProveedor("01003");
+        pagoRepository.save(pagoAnterior);
+        String quincena = "2021/6/2";
+        String codigoProveedor = "01003";
+        assert pagoService.foundIdQuincenaAnterior(quincena, codigoProveedor) != 0;
     }
     @Test
     void testPorcentajeVariacionLeche(){

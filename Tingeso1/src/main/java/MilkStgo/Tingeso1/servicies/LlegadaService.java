@@ -74,10 +74,6 @@ public class LlegadaService {
         aux.setKg_leche(Integer.parseInt(kg_leche));
         guardarDatos(aux);
     }
-
-    public void eliminarDatos(ArrayList<LlegadaEntity> datos){
-        llegadaRepository.deleteAll(datos);
-    }
     @Generated
     public String leerCsv(String archivo){
         BufferedReader bf = null;
