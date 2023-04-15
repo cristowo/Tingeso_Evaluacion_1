@@ -4,7 +4,10 @@ import MilkStgo.Tingeso1.entities.LlegadaEntity;
 import MilkStgo.Tingeso1.entities.PagoEntity;
 import MilkStgo.Tingeso1.entities.ProveedorEntity;
 import MilkStgo.Tingeso1.entities.ResultadoEntity;
+import MilkStgo.Tingeso1.repositories.LlegadaRepository;
 import MilkStgo.Tingeso1.repositories.PagoRepository;
+import MilkStgo.Tingeso1.repositories.ProveedorRepository;
+import MilkStgo.Tingeso1.repositories.ResultadoRepository;
 import lombok.Generated;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,10 +20,16 @@ import java.util.*;
 public class PagoService {
     @Autowired
     PagoRepository pagoRepository;
+    @Autowired
+    LlegadaRepository llegadaRepository;
+    @Autowired
+    ProveedorRepository proveedorRepository;
+    @Autowired
+    ResultadoRepository resultadoRepository;
 
     @Generated
     public void crearAll(){
-        ArrayList<String> proveedores = pagoRepository.findAllProveedores();
+        ArrayList<String> proveedores = proveedorRepository.findAllProveedores();
         for (String codigo: proveedores) {
             try {
                 setPago(codigo);
@@ -34,9 +43,8 @@ public class PagoService {
             return pagoRepository.findPagoByCodigo(codigo);
     }
 
-    @Generated
     public void setPago(String codigo) throws ParseException {
-        ProveedorEntity proveedor = pagoRepository.findProveedorByCodigoProveedor(codigo);
+        ProveedorEntity proveedor = proveedorRepository.findProveedorByCodigoProveedor(codigo);
         PagoEntity pago = new PagoEntity();
         //----------- Atributos Basicos-----------------
         //codigo proveedor
@@ -44,7 +52,7 @@ public class PagoService {
         //nombre proveedor
         pago.setNombreProveedor(proveedor.getNombre());
         //----------- Quincena ----------------
-        ArrayList<LlegadaEntity> llegadas = pagoRepository.findAllLlegadasByCodigoProveedor(codigo);
+        ArrayList<LlegadaEntity> llegadas = llegadaRepository.findAllLlegadasByCodigoProveedor(codigo);
         //Revisamos en que quincena nos encontramos
         String quincena = obtenerFechaQuincena(llegadas);
         pago.setQuincena(quincena);
@@ -52,13 +60,13 @@ public class PagoService {
         int totalKgLeche = totalKgLeche(llegadas);
         pago.setTotalKlsLeche(totalKgLeche);
         //---------- Numero de dias  ----------------
-        int numeroDiasEnvio = pagoRepository.countByProveedor(codigo);
+        int numeroDiasEnvio = llegadaRepository.countByProveedor(codigo);
         pago.setNumDiasEnvioLeche(numeroDiasEnvio);
         //------- Promedio Diario de Kg Leche  -------------
         double promedioDiarioKlsLeche = totalKgLeche/numeroDiasEnvio;
         pago.setPromedioDiarioKlsLeche(promedioDiarioKlsLeche);
         //------------ Porcentaje Grasa --------------------
-        ResultadoEntity resultado = pagoRepository.findResultadosByCodigoProveedor(codigo);
+        ResultadoEntity resultado = resultadoRepository.findResultadosByCodigoProveedor(codigo);
         int porcentajeGrasa = resultado.getPorcentaje_grasa();
         pago.setPorcentajeGrasa(porcentajeGrasa);
         //------------ Porcentaje Solidos Totales --------------------
@@ -236,7 +244,6 @@ public class PagoService {
             //vamos a la quincena anterior (mes y dia 1)
             quincenaAnterior = Integer.toString(ano) + "/" + Integer.toString(mes + 1) + "/1";
         }
-        //System.out.println(quincenaAnterior);
         //caso no hay quincena anterior
         PagoEntity quincenaEncontrada = pagoRepository.findPagoAnterior(quincenaAnterior, codigo);
         if (quincenaEncontrada == null) {

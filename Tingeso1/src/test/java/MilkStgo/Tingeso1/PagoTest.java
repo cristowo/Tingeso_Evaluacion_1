@@ -2,12 +2,18 @@ package MilkStgo.Tingeso1;
 
 import MilkStgo.Tingeso1.entities.LlegadaEntity;
 import MilkStgo.Tingeso1.entities.PagoEntity;
+import MilkStgo.Tingeso1.entities.ProveedorEntity;
+import MilkStgo.Tingeso1.entities.ResultadoEntity;
+import MilkStgo.Tingeso1.repositories.LlegadaRepository;
 import MilkStgo.Tingeso1.repositories.PagoRepository;
+import MilkStgo.Tingeso1.repositories.ProveedorRepository;
+import MilkStgo.Tingeso1.repositories.ResultadoRepository;
 import MilkStgo.Tingeso1.servicies.PagoService;
 
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +32,6 @@ class PagoTest {
     PagoRepository pagoRepository;
 
     @Test
-    // almenos tiene un pago, recordar tener archivos en database
     void testBuscarPagos() {
         PagoEntity pago = new PagoEntity();
         pago.setCodigoProveedor("01003");
@@ -34,7 +39,6 @@ class PagoTest {
         assert pagoService.buscarPagos("01003").size() > 0;
     }
     @Test
-// 0 pagos
     void testBuscarPagos2() {
         assertEquals(0, pagoService.buscarPagos("01004").size());
     }

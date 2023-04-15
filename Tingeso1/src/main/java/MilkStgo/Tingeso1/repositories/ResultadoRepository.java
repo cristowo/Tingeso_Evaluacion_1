@@ -10,7 +10,8 @@ import java.util.ArrayList;
 
 @Repository
 public interface ResultadoRepository extends JpaRepository<ResultadoEntity, Integer> {
-    //seleccionar todos los que tengan "Pasado"
+    @Query("select p from ResultadoEntity p where p.proveedor = :Codigo")
+    ResultadoEntity findResultadosByCodigoProveedor(@Param("Codigo") String Codigo);
 
 
 }
