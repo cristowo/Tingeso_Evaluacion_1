@@ -43,6 +43,7 @@ public class PagoService {
             return pagoRepository.findPagoByCodigo(codigo);
     }
 
+    @Generated
     public void setPago(String codigo) throws ParseException {
         ProveedorEntity proveedor = proveedorRepository.findProveedorByCodigoProveedor(codigo);
         PagoEntity pago = new PagoEntity();
