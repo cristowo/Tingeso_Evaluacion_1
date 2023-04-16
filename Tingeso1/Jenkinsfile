@@ -1,0 +1,57 @@
+pipeline{
+    agent any
+    tools{
+        maven "maven"
+    }
+    stages{
+        stage("Build JAR File"){
+            steps{
+                checkout scmGit(branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[credentialsId: 'tingeso1_tk', url: 'https://github.com/cristowo/Tingeso_Evaluacion_1']])
+                dir("Tingeso1"){
+                    sh "mvn clean install"
+                }
+            }
+        }
+        stage("Test"){
+            steps{
+                dir("Tingeso1"){
+                    sh "mvn test"
+                }
+            }
+        }
+        stage("SonarQube Analysis"){
+            steps{
+                dir("Tingeso1"){
+                    sh "mvn clean verify sonar:sonar -Dsonar.projectKey=tingeso1 -Dsonar.host.url=http://localhost:9000 -Dsonar.login=sqp_a5c8e36a189ac8b8ac8768b5289a7aa7842ffd19"
+                }
+            }
+        }
+        stage("Build Docker Image"){
+            steps{
+                dir("Tingeso1"){
+                    sh "docker build -t cristowo/docker_tingeso1 ."
+                }
+            }
+        }
+        stage("Push Docker Image"){
+            steps{
+                dir("Tingeso1"){
+                    withCredentials([string(credentialsId: 'dckrhubpassword', variable: 'dckpass')]){
+                        sh "docker login -u cristowo -p ${dckpass}"
+                        
+                    }
+                    sh "docker push cristowo/docker_tingeso1"
+                    
+                }
+                
+            }
+        }
+    }
+    post{
+        always{
+            dir("Tingeso1"){
+                sh "docker logout"
+            }
+        }
+    }
+}
