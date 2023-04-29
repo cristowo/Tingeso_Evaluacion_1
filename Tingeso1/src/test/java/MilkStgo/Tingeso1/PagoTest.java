@@ -30,6 +30,8 @@ class PagoTest {
     PagoService pagoService;
     @Autowired
     PagoRepository pagoRepository;
+    @Autowired
+    LlegadaRepository llegadaRepository;
 
     @Test
     void testBuscarPagos() {
@@ -220,49 +222,49 @@ class PagoTest {
     @Test
     void testbonificacionFrecuencia(){
         LlegadaEntity llegada = new LlegadaEntity();
+        llegada.setProveedor("ABC123");
         llegada.setTurno("M");
-        ArrayList<LlegadaEntity> llegadas = new ArrayList<LlegadaEntity>();
-        llegadas.add(llegada);
-        Integer pagoCategoria = 100000;
-        assert pagoService.bonificacionFecuencia (llegadas, pagoCategoria) == 0.0;
+        llegadaRepository.save(llegada);
+        Double bonificacion = pagoService.bonificacionFecuencia("ABC123", 100);
+        assertEquals(0.0, bonificacion);
     }
     @Test
     void testBonificacionFrecuenciaAmbosTurnosMayorIgualA10(){
-        ArrayList<LlegadaEntity> llegadas = new ArrayList<LlegadaEntity>();
         Integer pagoCategoria = 100000;
         for (int i = 0; i < 10; i++) {
             LlegadaEntity llegadaM = new LlegadaEntity();
             LlegadaEntity llegadaT = new LlegadaEntity();
+            llegadaM.setProveedor("ABCDEF");
+            llegadaT.setProveedor("ABCDEF");
             llegadaM.setTurno("M");
             llegadaT.setTurno("T");
-            llegadas.add(llegadaM);
-            llegadas.add(llegadaT);
+            llegadaRepository.save(llegadaM);
+            llegadaRepository.save(llegadaT);
         }
-        assertEquals(20000., pagoService.bonificacionFecuencia(llegadas, pagoCategoria));
+        assertEquals(20000., pagoService.bonificacionFecuencia("ABCDEF", pagoCategoria));
     }
     @Test
     void testBonificacionFrecuenciaTurnoMMayorIgualA10(){
-        ArrayList<LlegadaEntity> llegadas = new ArrayList<LlegadaEntity>();
         Integer pagoCategoria = 100000;
         for (int i = 0; i < 10; i++) {
             LlegadaEntity llegadaM = new LlegadaEntity();
+            llegadaM.setProveedor("ABCDEFG");
             llegadaM.setTurno("M");
-            llegadas.add(llegadaM);
+            llegadaRepository.save(llegadaM);
         }
-        assertEquals(12000, pagoService.bonificacionFecuencia(llegadas, pagoCategoria));
+        assertEquals(12000, pagoService.bonificacionFecuencia("ABCDEFG", pagoCategoria));
     }
 
     @Test
     void testBonificacionFrecuenciaTurnoTMayorIgualA10(){
-        ArrayList<LlegadaEntity> llegadas = new ArrayList<LlegadaEntity>();
         Integer pagoCategoria = 100000;
         for (int i = 0; i < 10; i++) {
             LlegadaEntity llegadaT = new LlegadaEntity();
+            llegadaT.setProveedor("ABCDEFGH");
             llegadaT.setTurno("T");
-            llegadas.add(llegadaT);
+            llegadaRepository.save(llegadaT);
         }
-        Double expected = pagoCategoria * 0.08;
-        assertEquals(8000, pagoService.bonificacionFecuencia(llegadas, pagoCategoria));
+        assertEquals(8000, pagoService.bonificacionFecuencia("ABCDEFGH", pagoCategoria));
     }
     @Test
     void testFoundIdQuincenaAnterior() throws ParseException {
@@ -397,6 +399,26 @@ class PagoTest {
         Double porcentajeVariacionSolidos = 66.0;
         Double pagoAcopio = 1000000.0;
         assert pagoService.descuentoVariacionSolidos(porcentajeVariacionSolidos, pagoAcopio) == 0.45 * pagoAcopio;
+    }
+
+    @Test
+    void testMontoRetencion(){
+        assertEquals(pagoService.montoRetencion(1000000.00),130000.00);
+    }
+
+    @Test
+    void testMontoRetencion2(){
+        assertEquals(pagoService.montoRetencion(1.00),0);
+    }
+
+    @Test
+    void testPagoByQuincena(){
+        pagoRepository.deleteAll();
+        PagoEntity pago = new PagoEntity();
+        pago.setCodigoProveedor("prueba");
+        pago.setQuincena("2000/12/2");
+        pagoRepository.save(pago);
+        assertEquals(pagoService.pagoByquincena("prueba","2000/12/2").size(), 1);
     }
 
 }
