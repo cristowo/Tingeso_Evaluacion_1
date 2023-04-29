@@ -32,7 +32,9 @@ public class PagoService {
         ArrayList<String> proveedores = proveedorRepository.findAllProveedores();
         for (String codigo: proveedores) {
             try {
-                setPago(codigo);
+                if(proveedorRepository.findProveedorByCodigoProveedor(codigo) != null) {
+                    setPago(codigo);
+                }
             } catch (ParseException e) {
                 e.printStackTrace();
             }
@@ -43,13 +45,12 @@ public class PagoService {
             return pagoRepository.findPagoByCodigo(codigo);
     }
 
-    @Generated
     public void setPago(String codigo) throws ParseException {
         ProveedorEntity proveedor = proveedorRepository.findProveedorByCodigoProveedor(codigo);
         PagoEntity pago = new PagoEntity();
         //----------- Atributos Basicos-----------------
         //codigo proveedor
-        pago.setCodigoProveedor(proveedor.getCodigo());
+        pago.setCodigoProveedor(codigo);
         //nombre proveedor
         pago.setNombreProveedor(proveedor.getNombre());
         //----------- Quincena ----------------
@@ -83,7 +84,7 @@ public class PagoService {
         double pagoPorSolidosTotales = pagoPorSolidos(llegadas, resultado.getPorcentaje_sodio());
         pago.setPagoPorSolidosTotales(pagoPorSolidosTotales);
         //------------ Bonificacion por Frecuencia --------------------
-        double bonificacionFrecuencia = bonificacionFecuencia(llegadas, (int) (pagoPorLeche));
+        double bonificacionFrecuencia = bonificacionFecuencia(codigo, (int) (pagoPorLeche));
         pago.setBonificacionPorFrecuencia(bonificacionFrecuencia);
         //---------- Porcentaje variacion leche -----------
         int idQuincenaAnterior = foundIdQuincenaAnterior(quincena, codigo);
@@ -92,8 +93,9 @@ public class PagoService {
         double pVariacionSolidosTotales = 0;
         if(idQuincenaAnterior != 0){
             PagoEntity pagoAnterior = pagoRepository.findById(idQuincenaAnterior).get();
+            //------------ Porcentaje variacion leche --------------------
             pVariacionLeche = porcentajeVariacionLeche(pagoAnterior, totalKgLeche);
-            //------------ Porcentaje variacion grasa -----------
+            //------------ Porcentaje variacion grasa --------------------
             pVariacionGrasa = porcentajeVariacionGrasa(pagoAnterior, porcentajeGrasa);
             //------------ Porcentaje variacion solidos totales -----------
             pVariacionSolidosTotales = porcentajeVariacionSolidos(pagoAnterior, porcentajeSolidosTotales);
@@ -116,14 +118,21 @@ public class PagoService {
         double pagoTotal = pagoAcopioLeche - (dVariacionLeche + dVariacionGrasa + dVariacionSolidosTotales);
         pago.setPagoTotal(pagoTotal);
         //------------ Monto Retencion --------------------
-        double montoRetencion = 0;
-        if(pagoTotal > 950000){montoRetencion = pagoTotal * 0.13;}
+        double montoRetencion = montoRetencion(pagoTotal);
         pago.setMontoRetencion(montoRetencion);
         //------------ Monto Final --------------------
         double montoFinal = pagoTotal - montoRetencion;
         pago.setMontoFinal(montoFinal);
 
         pagoRepository.save(pago);
+    }
+
+    public Double montoRetencion(Double pagoTotal){
+        double montoRetencion = 0;
+        if(pagoTotal > 950000){
+            montoRetencion = pagoTotal * 0.13;
+        }
+        return montoRetencion;
     }
 
     public String obtenerFechaQuincena(ArrayList<LlegadaEntity> llegadas){
@@ -203,16 +212,9 @@ public class PagoService {
         return pagoSolidos;
     }
 
-    public Double bonificacionFecuencia(ArrayList<LlegadaEntity> llegadas, Integer pagoCategoria){
-        // Bonificación por frecuencia
-        int mSum = 0, tSum = 0;
-        for(int i = 0; i < llegadas.size(); i++){
-            if(llegadas.get(i).getTurno() == "M"){
-                mSum++;
-            }else{
-                tSum++;
-            }
-        }
+    public Double bonificacionFecuencia(String codigo, Integer pagoCategoria){
+        int mSum = llegadaRepository.countTurnosById(codigo, "M");
+        int tSum = llegadaRepository.countTurnosById(codigo, "T");
         Double bonificacionFrecuencia = 0.0;
         if(mSum >= 10 && tSum >= 10){
             bonificacionFrecuencia = pagoCategoria * 0.2;
@@ -246,12 +248,12 @@ public class PagoService {
             quincenaAnterior = Integer.toString(ano) + "/" + Integer.toString(mes + 1) + "/1";
         }
         //caso no hay quincena anterior
-        PagoEntity quincenaEncontrada = pagoRepository.findPagoAnterior(quincenaAnterior, codigo);
-        if (quincenaEncontrada == null) {
+        List<PagoEntity> quincenaEncontrada = pagoRepository.findPagolist(quincenaAnterior, codigo);
+        if (quincenaEncontrada.size() == 0) {
             return 0;
         } else {
             //caso si hay quincena anterior
-            return quincenaEncontrada.getId_pago();
+            return quincenaEncontrada.get(0).getId_pago();
         }
     }
 
@@ -326,6 +328,11 @@ public class PagoService {
             descuentoVariacionSolidos = pagoAcopio * 0.45;
         }
         return descuentoVariacionSolidos;
+    }
+
+    public List<PagoEntity> pagoByquincena(String codigo, String quincena){
+        List<PagoEntity> pago = pagoRepository.findPagolist(quincena, codigo);
+        return pago;
     }
 
 

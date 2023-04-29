@@ -13,6 +13,10 @@ public interface LlegadaRepository extends JpaRepository<LlegadaEntity, Integer>
     @Query(value = "SELECT COUNT(DISTINCT l.fecha) FROM LlegadaEntity l where l.proveedor = :codigo")
     int countByProveedor(@Param("codigo") String codigo);
 
-    @Query("select l from LlegadaEntity l where l.proveedor = :Codigo")
-    ArrayList<LlegadaEntity> findAllLlegadasByCodigoProveedor(@Param("Codigo") String Codigo);
+    @Query("select l from LlegadaEntity l where l.proveedor = :codigo")
+    ArrayList<LlegadaEntity> findAllLlegadasByCodigoProveedor(@Param("codigo") String codigo);
+
+    @Query("select count(l) from LlegadaEntity l where l.proveedor = :codigo and l.turno = :turno")
+    Integer countTurnosById(@Param("codigo") String codigo, @Param("turno") String turno);
+
 }

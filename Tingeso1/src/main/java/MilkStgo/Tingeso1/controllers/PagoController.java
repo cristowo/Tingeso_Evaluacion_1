@@ -52,4 +52,16 @@ public class PagoController {
         return "plantillasPago";
     }
 
+    @GetMapping("/plantillasPago")
+    public String showPlantilla(@RequestParam String codigo, @RequestParam(required = false) Integer anio, @RequestParam(required = false) Integer mes, @RequestParam(required = false) Integer dia, Model model) {
+        if(anio == null || mes == null || dia == null){
+            return "redirect:/plantillasPago/"+codigo;
+        }
+        List<PagoEntity> pago = pagoService.pagoByquincena(codigo, anio+"/"+mes+"/"+dia);
+        if(pago.isEmpty()){
+            return "plantillaNoExiste";
+        }
+        model.addAttribute("pago", pago);
+        return "plantillasPago";
+    }
 }
