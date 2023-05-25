@@ -6,7 +6,7 @@ pipeline{
     stages{
         stage("Build JAR File"){
             steps{
-                checkout scmGit(branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[credentialsId: 'tingeso1_tk', url: 'https://github.com/cristowo/Tingeso_Evaluacion_1']])
+                checkout scmGit(branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[credentialsId: 'github_jenkins', url: 'https://github.com/cristowo/Tingeso_Evaluacion_1']])
                 dir("Tingeso1"){
                     bat "mvn clean install"
                 }
@@ -22,7 +22,7 @@ pipeline{
         stage("SonarQube Analysis"){
             steps{
                 dir("Tingeso1"){
-                    bat "mvn clean verify sonar:sonar -Dsonar.projectKey=tingeso1 -Dsonar.host.url=http://localhost:9000 -Dsonar.login=sqp_a5c8e36a189ac8b8ac8768b5289a7aa7842ffd19"
+                    bat "mvn clean verify sonar:sonar -Dsonar.projectKey=tingeso1_sonar -Dsonar.host.url=http://localhost:9000 -Dsonar.login=sqp_51e8272f6f9b7f87afeffb035adf26140281e9d1"
                 }
             }
         }
@@ -36,7 +36,7 @@ pipeline{
         stage("Push Docker Image"){
             steps{
                 dir("Tingeso1"){
-                    withCredentials([string(credentialsId: 'dckrhubpassword', variable: 'dckpass')]){
+                    withCredentials([string(credentialsId: 'dockerpass', variable: 'dckpass')]){
                         bat "docker login -u cristowo -p ${dckpass}"
                         
                     }
